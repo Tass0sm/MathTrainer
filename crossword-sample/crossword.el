@@ -55,3 +55,36 @@
   "Make (ROW, COLUMN) in CROSSWORD a block."
   (crossword--set crossword row column 'block)
   (crossword--cousin-set crossword row column 'block))
+
+(defun crossword-clear-cell (crossword row column)
+  "Erase (ROW, COLUMN) in CROSSWORD according to NYT rules."
+  (let ((cousin-position (crossword-cousin-position crossword
+						    row
+						    column)))
+    (if (and (not (equal cousin-position (cons row column)))
+	     (numberp (crossword-ref crossword (car cousin-position)
+				     (cdr cousin-position))))
+	(crossword--set crossword row column letter)
+      (crossword--set crossword row column nil)
+      (crossword--set crossword
+		      (car cousin-position)
+		      (cdr cousin-position)
+		      nil))))
+
+(defun crossword-block-p (crossword row column)
+  "Test if (ROW, COLUMN) in CROSSWORD is a block?"
+  (or (< row 0)
+      (>= row (crossword-size crossword))
+      (< column 0)
+      (>= column (crossword-size crossword))
+      (eq (crossword-ref crossword row column) 'block)))
+
+(defun crossword-one-letter-p (crossword row column)
+  "Test if (ROW, COLUMN) in CROSSWORD is a one-letter word."
+  (and (not (eq (crossword-ref crossword row column) 'block))
+       (or (and (crossword-block-p crossword (- row 1) column)
+		(crossword-block-p crossword (+ row 1) column))
+	   (and (crossword-block-p crossword row (- column 1)) 
+		(crossword-block-p crossword row (+ column 1))))))
+
+(provide 'crossword)
