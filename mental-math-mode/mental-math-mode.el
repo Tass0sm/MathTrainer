@@ -1,12 +1,33 @@
-(defun insert--problem (num1 num2)
+(defun insert-problem ()
   "Insert problem at the end of the buffer."
+  (interactive)
   (goto-char (point-max))
-  (insert (number-to-string num1) " + " (number-to-string num2) " = "))
+  (insert (number-to-string (random operand-limit)) " + "
+	  (number-to-string (random operand-limit)) " = "))
+
+(defun validate--problem ()
+  "Check problem on current line."
+  (let ((problem nil)
+	(answer nil)
+	(result nil))
+    (save-excursion
+      (search-backward "=")
+      (backward-char)
+      (setq problem (buffer-substring (point-at-bol) (point-marker))))
+    (save-excursion
+      (search-backward "=")
+      (forward-char 2)
+      (setq answer (string-to-number (buffer-substring (point-marker) (point-at-eol)))))
+    (setq result (string-to-number (calc-eval problem)))
+    (if (eq result answer)
+	(insert "\nCORRECT\n")
+      (insert "\nINCORRECT\n"))))
 
 (defun complete-problem ()
   "Check current line's problem and proceed to the next."
   (interactive)
-  ())
+  (validate--problem)
+  (insert-problem))
 
 (defvar operand-limit 10)
 
@@ -17,7 +38,7 @@
 (defun mental--math-mode-setup ()
   "Function to set up minimal mode."
   (kill-all-local-variables)
-  (insert--problem (random operand-limit) (random operand-limit))
+  (insert-problem)
   (setq major-mode 'mental-math-mode)
   (setq mode-name "mental-math")
   (use-local-map mental-math-mode-map)
@@ -36,6 +57,7 @@ Special commands:
 (if mental-math-mode-map
     nil
   (setq mental-math-mode-map (make-keymap))
-  (define-key mental-math-mode-map "\C-f" 'forward-char))
+  (define-key mental-math-mode-map "\M-n" 'insert-problem)
+  (define-key mental-math-mode-map (kbd "<return>") 'complete-problem))
 
 (provide 'mental-math-mode)

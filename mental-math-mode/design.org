@@ -1,5 +1,0 @@
-* 
-* Generate two random numbers.
-* Calculate their product.
-* 
-* 
