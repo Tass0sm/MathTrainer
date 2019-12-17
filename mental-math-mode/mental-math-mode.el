@@ -2,7 +2,8 @@
   "Insert problem at the end of the buffer."
   (interactive)
   (goto-char (point-max))
-  (insert (number-to-string (random operand-limit)) " + "
+  (insert "\n"
+          (number-to-string (random operand-limit)) " + "
 	  (number-to-string (random operand-limit)) " = "))
 
 (defun validate--problem ()
@@ -20,8 +21,8 @@
       (setq answer (string-to-number (buffer-substring (point-marker) (point-at-eol)))))
     (setq result (string-to-number (calc-eval problem)))
     (if (eq result answer)
-	(insert "\nCORRECT\n")
-      (insert "\nINCORRECT\n"))))
+	(insert "\nCORRECT")
+      (insert "\nINCORRECT"))))
 
 (defun complete-problem ()
   "Check current line's problem and proceed to the next."
@@ -31,8 +32,9 @@
 
 (defvar operand-limit 10)
 
-(defun set--operand-limit (limit)
+(defun set-operand-limit (limit)
   "Set maximum value for problem operands"
+  (interactive "nPositive operand limit: ")
   (setq operand-limit limit))
 
 (defun mental--math-mode-setup ()
@@ -57,7 +59,8 @@ Special commands:
 (if mental-math-mode-map
     nil
   (setq mental-math-mode-map (make-keymap))
-  (define-key mental-math-mode-map "\M-n" 'insert-problem)
-  (define-key mental-math-mode-map (kbd "<return>") 'complete-problem))
+  (define-key mental-math-mode-map "\C-c\C-n" 'insert-problem)
+  (define-key mental-math-mode-map (kbd "<return>") 'complete-problem)
+  (define-key mental-math-mode-map "\C-c\C-r" 'set-operand-limit))
 
 (provide 'mental-math-mode)

@@ -1,9 +1,15 @@
-0 + 0 = 0
+
+4 + 6 = 10
 CORRECT
-4 + 7 = 11
+5 + 7 = 
+9 + 0 = 9
 CORRECT
-7 + 5 = 12
+5 + 3 = 8
 CORRECT
-9 + 9 = 19
-INCORRECT
-1 + 5 = 
+0 + 8 = 8
+CORRECT
+13 + 14 = 27
+CORRECT
+14 + 4 = 18
+CORRECT
+12 + 9 = 
