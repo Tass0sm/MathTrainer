@@ -1,14 +1,18 @@
+(defvar problem-start-time 0)
+
 (defun insert-problem ()
   "Insert problem at the end of the buffer."
   (interactive)
   (goto-char (point-max))
   (insert "\n"
           (number-to-string (random operand-limit)) " + "
-	  (number-to-string (random operand-limit)) " = "))
+	  (number-to-string (random operand-limit)) " = ")
+  (setq problem-start-time (float-time)))
 
 (defun validate--problem ()
   "Check problem on current line."
-  (let ((problem nil)
+  (let ((start-time problem-start-time)
+	(problem nil)
 	(answer nil)
 	(result nil))
     (save-excursion
@@ -21,8 +25,12 @@
       (setq answer (string-to-number (buffer-substring (point-marker) (point-at-eol)))))
     (setq result (string-to-number (calc-eval problem)))
     (if (eq result answer)
-	(insert "\nCORRECT")
-      (insert "\nINCORRECT"))))
+	(insert "\nCORRECT - ")
+      (insert "\nINCORRECT - "))
+    (insert (format "%.3f s" (- (float-time) start-time)))))
+		    
+
+(insert (format "%s" (float-time)))1577922622.25099661577922450.0298865
 
 (defun complete-problem ()
   "Check current line's problem and proceed to the next."
